@@ -19,7 +19,7 @@ void init(void)
 
 bool isPointOnLeftSideOfLine(Point a, Line line)
 {
-	return (line.a.xCord - line.a.xCord) * (a.yCord - line.a.yCord) - (line.b.yCord - line.a.yCord) * (a.xCord - line.a.xCord) > 0;
+	return (line.b.xCord - line.a.xCord) * (a.yCord - line.a.yCord) - (line.b.yCord - line.a.yCord) * (a.xCord - line.a.xCord) > 0;
 }
 
 void glDrawVerticalLines() {
