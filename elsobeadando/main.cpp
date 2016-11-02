@@ -3,14 +3,14 @@
 #include "Point.h"
 #include "Circle.h"
 #define _USE_MATH_DEFINES
-#include <cmath>
-#include <iostream>
-#include <vector>
+#include <cmath> //PI
+#include <iostream> //egérkatt log
+#include <vector> //köröket tároljuk benne
 
 const int windowWidth = 800;
 const int windowHeight = 600;
 int keyStates[256];
-double offset = 0.01;
+double offset = 0.01; //kör rajzolásának lépésköze
 double circleRadius = 25;
 std::vector <Circle> circleContainer;
 
