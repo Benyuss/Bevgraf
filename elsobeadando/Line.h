@@ -5,7 +5,9 @@
 class Line {
 public:
 
-	Line(Point, Point);
+	Line(Point aGiven, Point bGiven) : a(aGiven), b(bGiven) {
+		//inicializációs lista
+	}
 
 	Point a;
 	Point b;

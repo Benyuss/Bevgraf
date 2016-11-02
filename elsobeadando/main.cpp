@@ -5,17 +5,17 @@
 #define _USE_MATH_DEFINES
 #include <cmath> //PI
 #include <iostream> //egérkatt log
-#include <vector> //köröket tároljuk benne
+#include <vector> //köröket tárolásához
 
 const int windowWidth = 800;
 const int windowHeight = 600;
 int keyStates[256];
 double offset = 0.01; //kör rajzolásának lépésköze
-double circleRadius = 25;
-std::vector <Circle> circleContainer;
+double circleRadius = 25; //globálisan ez lesz a körök sugara.
+std::vector <Circle> circleContainer; //ez fogja tárolni a köröket
 
-Line verticalLine = Line(Point(400, 0), Point(400, 600));
-Line horizontalLine = Line(Point(0, 300), Point(800, 300));
+Line verticalLine = Line(Point(400, 0), Point(400, 600)); //függõleges vonal
+Line horizontalLine = Line(Point(0, 300), Point(800, 300)); //vízszintes vonal
 
 void init(void)
 {
@@ -26,42 +26,61 @@ void init(void)
 	gluOrtho2D(0.0, windowWidth, 0.0, windowHeight);
 }
 
-bool isPointOnLeftSideOfLine(Point a, Line line)
-{
-	return (line.b.xCord - line.a.xCord) * (a.yCord - line.a.yCord) - (line.b.yCord - line.a.yCord) * (a.xCord - line.a.xCord) > 0;
-}
-
-void glDrawVerticalLines() {
+/*
+függõleges vonal rajzolása
+*/
+void glDrawVerticalLine() {
 	glColor3d(1.0, 0.0, 0.0);
 
 	glBegin(GL_LINES);
 
-	glVertex2d(verticalLine.a.xCord, verticalLine.a.yCord);
-	glVertex2d(verticalLine.b.xCord, verticalLine.b.yCord);
+	glVertex2d(verticalLine.a.xCord, verticalLine.a.yCord); //alsó pont
+	glVertex2d(verticalLine.b.xCord, verticalLine.b.yCord); //felsõ pont
 
 	glEnd();
 }
 
-void glDrawHorizontalLines() {
+/*
+vízszintes vonal rajzolása
+*/
+void glDrawHorizontalLine() {
 	glColor3d(0.0, 1.0, 0.0);
 
 	glBegin(GL_LINES);
 
-	glVertex2d(horizontalLine.a.xCord, horizontalLine.a.yCord);
-	glVertex2d(horizontalLine.b.xCord, horizontalLine.b.yCord);
+	glVertex2d(horizontalLine.a.xCord, horizontalLine.a.yCord); //bal szélsõ pont
+	glVertex2d(horizontalLine.b.xCord, horizontalLine.b.yCord); //jobb szélsõ pont
 
 	glEnd();
 
 }
 
+/*
+lenyomott gombok kezelése
+x - y az egérmutató helyét mutatja viszont ez csak a paraméterlista miatt fontos, 
+az egérkezelésre más fv-t használunk.
+*/
 void keyPressed(unsigned char key, int x, int y) {
 	keyStates[key] = 1;
 }
 
+/*
+lásd keyPressed fv. leírása
+*/
 void keyUp(unsigned char key, int x, int y) {
 	keyStates[key] = 0;
 }
 
+/*
+a-d, s-w gombok kezelése
+a-> függõleges teteje balra
+d-> függõleges teteje jobbra
+
+s-> vízszintes bal oldala lefele
+w-> vízszintes bal oldala felfele
+
+//TODO check
+*/
 void keyOperations() {
 
 	if (keyStates['a']) {
@@ -93,7 +112,12 @@ void keyOperations() {
 		}
 	}
 
-	glutPostRedisplay();
+	glutPostRedisplay(); //TODO
+}
+
+bool isPointOnLeftSideOfLine(Point a, Line line)
+{
+	return (line.b.xCord - line.a.xCord) * (a.yCord - line.a.yCord) - (line.b.yCord - line.a.yCord) * (a.xCord - line.a.xCord) > 0;
 }
 
 void glChangeColors(bool vertical, bool horizontal) {
@@ -160,6 +184,7 @@ float distanceOfPointsFromLine(Line l, Point p)
 
 	return fabs(((abyDiff)*l.a.xCord + (baxDiff)*l.a.yCord - (abyDiff)*p.xCord - (baxDiff)*p.yCord) / sqrt((abyDiff)*(abyDiff)+(baxDiff)*(baxDiff)));
 }
+
 Point mirroring(Point hasToBeMirror, Point mirror)
 {
 	float t = (hasToBeMirror.xCord*mirror.xCord + hasToBeMirror.yCord*mirror.yCord) / (mirror.xCord*mirror.xCord + mirror.yCord*mirror.yCord);
@@ -196,7 +221,8 @@ void move() {
 
 void glMouseControl(int button, int state, int xMouse, int yMouse) {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-		std::cout << xMouse << std::endl << yMouse;
+		
+		std::cout << xMouse << "\t" << yMouse << std::endl;
 
 		double step = rand() % 1 + 0.6;
 
@@ -211,8 +237,8 @@ void display() {
 
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	glDrawVerticalLines();
-	glDrawHorizontalLines();
+	glDrawVerticalLine();
+	glDrawHorizontalLine();
 
 	glDrawPoints();
 
