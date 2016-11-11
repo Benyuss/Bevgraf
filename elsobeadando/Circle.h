@@ -16,6 +16,7 @@ public:
 	Circle(Point, double, double);
 
 	void invertDestination(char b);
+	Point mirroring(Point, Point);
 
 	Point origo;
 	double radius;

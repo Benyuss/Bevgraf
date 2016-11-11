@@ -1,4 +1,4 @@
-#include <GL\glut.h>
+#include <gl\glut.h>
 #include "Line.h"
 #include "Point.h"
 #include "Circle.h"
@@ -6,6 +6,8 @@
 #include <cmath> //PI
 #include <iostream> //egérkatt log
 #include <vector> //köröket tárolásához
+#include <random>
+
 
 const int windowWidth = 800;
 const int windowHeight = 600;
@@ -204,24 +206,12 @@ void glDrawCircle(Circle circle) {
 /*
 elõadásos képlet
 */
-float distanceOfPointsFromLine(Line l, Point p)
+double distanceOfPointsFromLine(Line l, Point p)
 {
-	float abyDiff = l.a.yCord - l.b.yCord;
-	float baxDiff = l.b.xCord - l.a.xCord;
+	double abyDiff = l.a.yCord - l.b.yCord;
+	double baxDiff = l.b.xCord - l.a.xCord;
 
 	return fabs(((abyDiff)*l.a.xCord + (baxDiff)*l.a.yCord - (abyDiff)*p.xCord - (baxDiff)*p.yCord) / sqrt((abyDiff)*(abyDiff)+(baxDiff)*(baxDiff)));
-}
-
-/*
-feladatos pdf alapján készült tükrözõ fv.
-*/
-Point mirroring(Point hasToBeMirror, Point mirror)
-{
-	double t = (hasToBeMirror.xCord*mirror.xCord + hasToBeMirror.yCord*mirror.yCord) / (mirror.xCord*mirror.xCord + mirror.yCord*mirror.yCord);
-	Point c = Point(mirror.xCord*t, mirror.yCord*t);
-	Point ac = Point(c.xCord - hasToBeMirror.xCord, c.yCord - hasToBeMirror.yCord);
-	Point mirrored = Point(hasToBeMirror.xCord + 2 * ac.xCord, hasToBeMirror.yCord + 2 * ac.yCord);
-	return mirrored;
 }
 
 /*
@@ -244,16 +234,76 @@ void move() {
 		}
 		if (distanceOfPointsFromLine(verticalLine, circleContainer[i].origo) < circleRadius)
 		{
-			circleContainer[i].destination = mirroring(circleContainer[i].destination, Point(verticalLine.b.xCord - verticalLine.a.xCord, verticalLine.b.yCord - verticalLine.a.yCord));
+			circleContainer[i].destination = circleContainer[i].mirroring(circleContainer[i].destination, Point(verticalLine.b.xCord - verticalLine.a.xCord, verticalLine.b.yCord - verticalLine.a.yCord));
 		}
 		else if (distanceOfPointsFromLine(horizontalLine, circleContainer[i].origo) < circleRadius)
 		{
-			circleContainer[i].destination = mirroring(circleContainer[i].destination, Point(horizontalLine.a.xCord - horizontalLine.b.xCord, horizontalLine.a.yCord - horizontalLine.b.yCord));
+			circleContainer[i].destination = circleContainer[i].mirroring(circleContainer[i].destination, Point(horizontalLine.a.xCord - horizontalLine.b.xCord, horizontalLine.a.yCord - horizontalLine.b.yCord));
 		}
 		circleContainer[i].origo.xCord += circleContainer[i].destination.xCord;
 		circleContainer[i].origo.yCord += circleContainer[i].destination.yCord;
 	}
 }
+
+/*
+Ellenõrzi a kattintott lokációt. Amennyiben olyan helyre kattintunk, 
+ahol a koordináta és sugár összege(vagy épp különbsége):
+	- az ablakon kívülre, 
+	- az ablak szélére,
+	- egy vonalra,
+esik, akkor a kör nem jön létre.
+*/
+bool isCirclePositionValid(Point p) {
+	std::cout << "istance from lines" << std::endl;
+	std::cout << "horizontal: " << distanceOfPointsFromLine(horizontalLine, p) << std::endl;
+	std::cout << "vertical: " << distanceOfPointsFromLine(verticalLine, p) << std::endl;
+
+	double distanceFromHorizontal = distanceOfPointsFromLine(horizontalLine, p);
+	if ((p.xCord - circleRadius) < 0 || (p.xCord + circleRadius) > windowWidth) {
+		return false;
+	}
+	else if ((p.yCord - circleRadius) < 0 || (p.yCord + circleRadius) > windowHeight) {
+		return false;
+	}
+	else if (distanceFromHorizontal - circleRadius <= 0 ) {
+		return false;
+	}
+	else if (distanceOfPointsFromLine(verticalLine, p) - circleRadius <= 0) {
+		return false;
+	}
+	else {
+		return true;
+	}
+}
+
+
+double distanceBetween(Point p, Circle c) {
+	return sqrt(pow(p.xCord - c.origo.xCord, 2) + pow(p.yCord - (windowHeight - c.origo.yCord), 2));
+}
+
+void deleteCircles(Point click) {
+	for (int i = 0; i < circleContainer.size(); i++) {
+
+		double distance = distanceBetween(click, circleContainer[i]);
+
+		//inside
+		if (distance < circleContainer[i].radius) {
+			circleContainer.erase(circleContainer.begin() + i);
+		}
+	}
+}
+
+
+/*
+http://en.cppreference.com/w/cpp/numeric/random/uniform_real_distribution
+*/
+double randomGenerator() {
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<> dis(0, 2);
+	return dis(gen);
+}
+
 
 /*
 Ha az egér bal gombját lenyomjuk, kilogolja a terminálra a mutató koordinátáit,
@@ -264,13 +314,23 @@ A létrehozott kört, majd a konténerben tároljuk.
 */
 void glMouseControl(int button, int state, int xMouse, int yMouse) {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-
 		std::cout << xMouse << "\t" << yMouse << std::endl;
 
-		double step = rand() % 1 + 0.6;
+		double speed = randomGenerator();
 
-		Circle circle = Circle(Point(xMouse, windowHeight - yMouse), circleRadius, step);
-		circleContainer.push_back(circle);
+		bool validPosition = isCirclePositionValid(Point(xMouse, yMouse));
+
+		if (validPosition == true) {
+			Circle circle = Circle(Point(xMouse, windowHeight - yMouse), circleRadius, speed);
+			circleContainer.push_back(circle);
+		}
+		else {
+			std::cout << "INVALID POSITION" << std::endl;
+		}
+	}
+
+	if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) {
+		deleteCircles(Point(xMouse, yMouse));
 	}
 }
 
