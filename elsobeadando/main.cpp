@@ -259,6 +259,8 @@ bool isCirclePositionValid(Point p) {
 	std::cout << "vertical: " << distanceOfPointsFromLine(verticalLine, p) << std::endl;
 
 	double distanceFromHorizontal = distanceOfPointsFromLine(horizontalLine, p);
+	double distanceFromVertical = distanceOfPointsFromLine(verticalLine, p);
+
 	if ((p.xCord - circleRadius) < 0 || (p.xCord + circleRadius) > windowWidth) {
 		return false;
 	}
@@ -268,7 +270,7 @@ bool isCirclePositionValid(Point p) {
 	else if (distanceFromHorizontal - circleRadius <= 0 ) {
 		return false;
 	}
-	else if (distanceOfPointsFromLine(verticalLine, p) - circleRadius <= 0) {
+	else if (distanceFromVertical - circleRadius <= 0) {
 		return false;
 	}
 	else {
