@@ -19,6 +19,11 @@ std::vector <Circle> circleContainer; //ez fogja tárolni a köröket
 Line verticalLine = Line(Point(400, 0), Point(400, 600)); //függõleges vonal
 Line horizontalLine = Line(Point(0, 300), Point(800, 300)); //vízszintes vonal
 
+Line topBorder = Line(Point(0, windowHeight), Point(windowWidth, windowHeight));
+Line botBorder = Line(Point(0, 0), Point(windowWidth, 0));
+Line rightBorder = Line(Point(windowWidth, 0), Point(windowWidth, windowHeight));
+Line leftBorder = Line(Point(0, 0), Point(0, windowHeight));
+
 void init(void)
 {
 	glClearColor(1.0, 1.0, 1.0, 0.0);
@@ -224,14 +229,29 @@ void move() {
 
 	for (int i = 0; i < circleContainer.size(); i++)
 	{
-		if (circleContainer[i].origo.xCord - circleRadius < 0 || circleContainer[i].origo.xCord + circleRadius > windowWidth)
+		/*if (circleContainer[i].origo.xCord - circleRadius < 0 || circleContainer[i].origo.xCord + circleRadius > windowWidth)
 		{
 			circleContainer[i].invertDestination('x');
 		}
 		else if (circleContainer[i].origo.yCord - circleRadius < 0 || circleContainer[i].origo.yCord + circleRadius > windowHeight)
 		{
 			circleContainer[i].invertDestination('y');
+		}*/
+
+		if (distanceOfPointsFromLine(topBorder, circleContainer[i].origo) < circleRadius) {
+			circleContainer[i].destination = circleContainer[i].mirroring(circleContainer[i].destination, Point(topBorder.a.xCord - topBorder.b.xCord, topBorder.a.yCord - topBorder.b.yCord));
 		}
+		if (distanceOfPointsFromLine(botBorder, circleContainer[i].origo) < circleRadius) {
+			circleContainer[i].destination = circleContainer[i].mirroring(circleContainer[i].destination, Point(botBorder.a.xCord - botBorder.b.xCord, botBorder.a.yCord - botBorder.b.yCord));
+		}
+		if (distanceOfPointsFromLine(rightBorder, circleContainer[i].origo) < circleRadius) {
+			circleContainer[i].destination = circleContainer[i].mirroring(circleContainer[i].destination, Point(rightBorder.a.xCord - rightBorder.b.xCord, rightBorder.a.yCord - rightBorder.b.yCord));
+		}
+		if (distanceOfPointsFromLine(leftBorder, circleContainer[i].origo) < circleRadius) {
+			circleContainer[i].destination = circleContainer[i].mirroring(circleContainer[i].destination, Point(leftBorder.a.xCord - leftBorder.b.xCord, leftBorder.a.yCord - leftBorder.b.yCord));
+		}
+
+
 		if (distanceOfPointsFromLine(verticalLine, circleContainer[i].origo) < circleRadius)
 		{
 			circleContainer[i].destination = circleContainer[i].mirroring(circleContainer[i].destination, Point(verticalLine.b.xCord - verticalLine.a.xCord, verticalLine.b.yCord - verticalLine.a.yCord));
@@ -254,7 +274,7 @@ ahol a koordináta és sugár összege(vagy épp különbsége):
 esik, akkor a kör nem jön létre.
 */
 bool isCirclePositionValid(Point p) {
-	std::cout << "istance from lines" << std::endl;
+	std::cout << "distance from lines" << std::endl;
 	std::cout << "horizontal: " << distanceOfPointsFromLine(horizontalLine, p) << std::endl;
 	std::cout << "vertical: " << distanceOfPointsFromLine(verticalLine, p) << std::endl;
 
@@ -302,7 +322,7 @@ http://en.cppreference.com/w/cpp/numeric/random/uniform_real_distribution
 double randomGenerator() {
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_real_distribution<> dis(0, 2);
+	std::uniform_real_distribution<> dis(0, 1.5);
 	return dis(gen);
 }
 
@@ -316,15 +336,22 @@ A létrehozott kört, majd a konténerben tároljuk.
 */
 void glMouseControl(int button, int state, int xMouse, int yMouse) {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-		std::cout << xMouse << "\t" << yMouse << std::endl;
+
+		int containerSize = circleContainer.size();
+
+		std::cout << xMouse << "\t" << yMouse << "\t" << containerSize << std::endl;
 
 		double speed = randomGenerator();
 
 		bool validPosition = isCirclePositionValid(Point(xMouse, yMouse));
 
-		if (validPosition == true) {
+		if (validPosition == true && containerSize <= 20) {
 			Circle circle = Circle(Point(xMouse, windowHeight - yMouse), circleRadius, speed);
 			circleContainer.push_back(circle);
+			std::cout << "Circle created with ID: " << containerSize << std::endl;
+		}
+		else if (containerSize > 20) {
+			std::cout << "circle container is full." << std::endl;
 		}
 		else {
 			std::cout << "INVALID POSITION" << std::endl;
