@@ -12,7 +12,7 @@
 const int windowWidth = 800;
 const int windowHeight = 600;
 int keyStates[256];
-double offset = 0.01; //kör rajzolásának lépésköze TODO
+double offset = 0.01; //kör rajzolásának lépésköze
 double circleRadius = 25; //globálisan ez lesz a körök sugara.
 std::vector <Circle> circleContainer; //ez fogja tárolni a köröket
 
@@ -229,15 +229,6 @@ void move() {
 
 	for (int i = 0; i < circleContainer.size(); i++)
 	{
-		/*if (circleContainer[i].origo.xCord - circleRadius < 0 || circleContainer[i].origo.xCord + circleRadius > windowWidth)
-		{
-			circleContainer[i].invertDestination('x');
-		}
-		else if (circleContainer[i].origo.yCord - circleRadius < 0 || circleContainer[i].origo.yCord + circleRadius > windowHeight)
-		{
-			circleContainer[i].invertDestination('y');
-		}*/
-
 		if (distanceOfPointsFromLine(topBorder, circleContainer[i].origo) < circleRadius) {
 			circleContainer[i].destination = circleContainer[i].mirroring(circleContainer[i].destination, Point(topBorder.a.xCord - topBorder.b.xCord, topBorder.a.yCord - topBorder.b.yCord));
 		}
