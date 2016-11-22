@@ -28,17 +28,50 @@ void Pumpkin::draw() {
 /*
 http://en.cppreference.com/w/cpp/numeric/random/uniform_real_distribution
 */
-double randomGenerator(double begin, double end) {
+double Pumpkin::randomGenerator(double begin, double end) {
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_real_distribution<> dis(begin, end);
 	return dis(gen);
 }
 
+void Pumpkin::pushBack() {
+	points.push_back(A);
+	points.push_back(B);
+	points.push_back(C);
+	points.push_back(D);
+	points.push_back(E);
+	points.push_back(F);
+	points.push_back(G);
+	points.push_back(H);
+	points.push_back(I);
+	points.push_back(J);
+	points.push_back(K);
+	points.push_back(L);
+	points.push_back(M);
+	points.push_back(N);
+	points.push_back(O);
+	points.push_back(P);
+	points.push_back(Q);
+	points.push_back(R);
+	points.push_back(S);
+	points.push_back(T);
+	points.push_back(U);
+	points.push_back(V);
+	points.push_back(W);
+	points.push_back(Z);
+	points.push_back(C_1);
+	points.push_back(D_1);
+	points.push_back(E_1);
+	points.push_back(F_1);
+	points.push_back(G_1);
+	points.push_back(H_1);
+}
+
 void Pumpkin::makeMatrixM() {
 	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < 3; j++) {
-			transform[i][j] = 0;
+			trans[i][j] = 0;
 		}
 	}
 }
@@ -113,4 +146,8 @@ void Pumpkin::makeMatrixE() {
 	}
 
 	}
+}
+
+HomogenPoint Pumpkin::initPt(HomogenPoint point) {
+	return transform(trans, point);
 }
