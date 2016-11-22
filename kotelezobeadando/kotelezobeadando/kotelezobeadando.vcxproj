@@ -145,17 +145,23 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Chunk.h" />
     <ClInclude Include="Eye.h" />
+    <ClInclude Include="HomogenPoint.h" />
     <ClInclude Include="Mouth.h" />
-    <ClInclude Include="Outline.h" />
-    <ClInclude Include="Point.h" />
     <ClInclude Include="pumpkin.h" />
-    <ClInclude Include="Utility.h" />
+    <ClInclude Include="Tooth.h" />
+    <ClInclude Include="Transformations.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Chunk.cpp" />
+    <ClCompile Include="Eye.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Mouth.cpp" />
     <ClCompile Include="Point.cpp" />
-    <ClCompile Include="Utility.cpp" />
+    <ClCompile Include="Pumpkin.cpp" />
+    <ClCompile Include="Tooth.cpp" />
+    <ClCompile Include="Transformations.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
