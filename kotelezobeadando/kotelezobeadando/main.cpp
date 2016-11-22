@@ -3,9 +3,6 @@
 #include <GL\glut.h>
 #include <random>
 
-const int windowWidth = 800;
-const int windowHeight = 600;
-
 std::vector<Pumpkin> pumpkinContainer; //ez fogja tárolni a tököket
 
 void init(void) {

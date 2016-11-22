@@ -158,7 +158,6 @@
     <ClCompile Include="Eye.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mouth.cpp" />
-    <ClCompile Include="Point.cpp" />
     <ClCompile Include="Pumpkin.cpp" />
     <ClCompile Include="Tooth.cpp" />
     <ClCompile Include="Transformations.cpp" />

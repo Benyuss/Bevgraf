@@ -2,7 +2,7 @@
 
 void matrixMultiplication(double a[][3], double b[][3], double c[][3]) {
 	int i, j, k;
-	float sum;
+	double sum;
 	for (i = 0; i < 3; i++)
 		for (j = 0; j < 3; j++) {
 			sum = 0;

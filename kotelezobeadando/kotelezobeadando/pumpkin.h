@@ -20,9 +20,22 @@ const int windowHeight = 600;
 class Pumpkin {
 public:
 
-	std::vector<HomogenPoint> points;
-
 	Pumpkin() {
+
+		scale = randomGenerator(10, 100);
+		alpha = randomGenerator(1, 360) * PI / 180;
+		shiftX = randomGenerator(0, windowWidth - 2 * scale) + scale;
+		shiftY = randomGenerator(0, windowHeight - 2 * scale) + scale;
+
+		makeMatrixE();
+		makeMatrixF();
+		makeMatrixM();
+		makeMatrixN();
+		makeMatrixT();
+
+		matrixMultiplication(scaling, rotate, trans);
+		matrixMultiplication(mirror, trans, trans);
+		matrixMultiplication(shift, trans, trans);
 
 		A = initPt(HomogenPoint(0, 0.512));
 		B = initPt(HomogenPoint(0.454, 0.565));
@@ -60,23 +73,6 @@ public:
 
 		C_1 = initPt(HomogenPoint(-0.182, 0.681));
 		D_1 = initPt(HomogenPoint(-0.063, 0.717));
-
-		scale = randomGenerator(10, 100);
-		alpha = randomGenerator(1, 360) * PI / 180;
-		shiftX = randomGenerator(0, windowWidth - 2 * scale) + scale;
-		shiftY = randomGenerator(0, windowHeight - 2 * scale) + scale;
-
-		makeMatrixE();
-		makeMatrixF();
-		makeMatrixM();
-		makeMatrixN();
-		makeMatrixT();
-
-		matrixMultiplication(scaling, rotate, trans);
-		matrixMultiplication(mirror, trans, trans);
-		matrixMultiplication(shift, trans, trans);
-
-		pushBack();
 
 		leftEye = Eye(K, L, M);
 		rightEye = Eye(N, O, P);
@@ -157,8 +153,6 @@ public:
 	void draw();
 
 	double randomGenerator(double begin, double end);
-
-	void pushBack();
 
 	HomogenPoint initPt(HomogenPoint);
 
